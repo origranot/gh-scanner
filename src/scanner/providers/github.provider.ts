@@ -54,7 +54,7 @@ export class GithubProvider extends Provider<Octokit> {
       private: details.private,
       ownerName: details.owner.login,
       numberOfFiles,
-      ymlFileContent: Buffer.from((fileContent as any).content, 'base64').toString('utf-8'),
+      ymlFileContent: fileContent ? Buffer.from((fileContent as any).content, 'base64').toString('utf-8') : null,
       activeWebhooks: activeWebhooks.length,
     };
   }
@@ -68,28 +68,36 @@ export class GithubProvider extends Provider<Octokit> {
   }
 
   private async getActiveWebhooks(owner: string, repo: string) {
-    const response = await this._client.request('GET /repos/{owner}/{repo}/hooks', {
-      owner,
-      repo,
-    });
+    try {
+      const response = await this._client.request('GET /repos/{owner}/{repo}/hooks', {
+        owner,
+        repo,
+      });
 
-    return response.data.filter((hook) => hook.active);
+      return response.data.filter((hook) => hook.active);
+    } catch (err) {
+      return [];
+    }
   }
 
   private async getNumberOfFiles(owner: string, repo: string): Promise<number> {
     const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/trees/master?recursive=1`);
     const data = await response.json();
 
-    return data.tree.length;
+    return data?.tree?.length || null;
   }
 
   private async getFileContent(owner: string, repo: string, path: string) {
-    const response = await this._client.request('GET /repos/{owner}/{repo}/contents/{path}', {
-      owner,
-      repo,
-      path,
-    });
+    try {
+      const response = await this._client.request('GET /repos/{owner}/{repo}/contents/{path}', {
+        owner,
+        repo,
+        path,
+      });
 
-    return response.data;
+      return response.data;
+    } catch (err) {
+      return null;
+    }
   }
 }
