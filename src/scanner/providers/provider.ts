@@ -1,3 +1,5 @@
+import { IRepository } from "../../shared/interfaces";
+
 export abstract class Provider<Client> {
   constructor(readonly name: string) {}
 
@@ -8,6 +10,6 @@ export abstract class Provider<Client> {
   }
 
   protected abstract authenticate(): void;
-  abstract getRepositoriesByUsername(username: string): Promise<any[]>;
-  abstract getRepositoryByName(id: string): Promise<any>;
+  abstract getRepositoriesByUsername(username: string): Promise<Partial<IRepository>[]>;
+  abstract getRepositoryByName(name: string): Promise<IRepository>;
 }

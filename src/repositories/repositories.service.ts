@@ -21,6 +21,11 @@ export class RepositoriesService {
   }
 
   async getRepositoryDetailsByName(providerName: ProviderEnum, name: string): Promise<IRepository> {
+    const repository = await this.cacheManager.get(`${providerName}_${name}`);
+    if (repository) {
+      return repository as IRepository;
+    }
+
     return this.providersMap.get(providerName).getRepositoryByName(name);
   }
 }

@@ -1,5 +1,9 @@
 # Github Scanner
 
+## Description
+
+This is a simple GraphQL API that scans a Github user repositories and returns the repositories and their details.
+
 ## Getting Started
 
 To set up and run the project, follow these steps:
@@ -18,11 +22,9 @@ I decided to store the repositories in a cache for a faster response time. The c
 
 I created a basic interval to scan the user repositories. In a real world scenario, I would use a cron job queue like Bull to handle the scanning of the repositories. This would allow for better control of the jobs and allow for more control over the scanning process.
 
-I decided to use my real Github account and repositories, feels like it has more data than cloning the test repositories couple of times. I also didn't understand the need for the test repositories and the requirement to scan only 2 repos at a time... I would love to hear more about this.
+I decided to use my real Github account and repositories, feels like it has more data than cloning the test repositories couple of times.
 
 ### Limitations
-
-The detailed query for a specific repository isn't efficient, It makes couple of requests to the Github API. In a real world scenario I would use a cron job over a queue to scan this details and store in a cache. This would allow for faster response times and less requests to the Github API.
 
 In the scanning process, I omit the scan process of all the providers in a loop. In a real world scenario, I would split the providers into different jobs and run them in parallel. This would allow for a faster scanning process.
 
