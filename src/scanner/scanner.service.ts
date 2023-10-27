@@ -33,9 +33,8 @@ export class ScannerService implements OnModuleInit {
 
     for (const provider of this.providers) {
       console.log(`Scanning ${provider.name} repositories...`);
-      const repositories = await provider.getRepositoriesByUsername(usernameToScan);
+      const repositories = await provider.getRepositoriesNamesByUsername(usernameToScan);
       await this.scanRepositoriesInBatches(provider, repositories, scannerBatchSize);
-      this.cacheManager.set(provider.name, repositories, 0);
       console.log(`Finished scanning ${provider.name} repositories, found ${repositories.length} repositories`);
     }
 
@@ -43,6 +42,8 @@ export class ScannerService implements OnModuleInit {
   };
 
   private async scanRepositoriesInBatches(provider: Provider<any>, repositories: Partial<IRepository>[], batchSize: number) {
+    const detailedRepositories: IRepository[] = [];
+
     for (let i = 0; i < repositories.length; i += batchSize) {
       const batch = repositories.slice(i, i + batchSize); // Get the next batch of repositories
 
@@ -54,10 +55,14 @@ export class ScannerService implements OnModuleInit {
       // Wait for all promises to be resolved
       const batchResults = await Promise.all(promises);
 
-      // Save the resolved data to the cache
+      // Save the details of each repository in the cache
       for (const result of batchResults) {
         await this.cacheManager.set(`${provider.name}_${result.name}`, result, 0);
+        detailedRepositories.push(result);
       }
     }
+
+    // Save all the repositories in the cache
+    await this.cacheManager.set(provider.name, detailedRepositories, 0);
   }
 }

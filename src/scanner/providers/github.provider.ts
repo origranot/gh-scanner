@@ -17,17 +17,9 @@ export class GithubProvider extends Provider<Octokit> {
     this._client = octokit;
   }
 
-  async getRepositoriesByUsername(username: string): Promise<Partial<IRepository>[]> {
+  async getRepositoriesNamesByUsername(username: string): Promise<Pick<IRepository, 'name'>[]> {
     const rawRepositories = await this.getRawRepositoriesByUsername(username);
-    const repositories: IRepository[] = rawRepositories.map((rawRepository) => {
-      return {
-        id: rawRepository.id,
-        name: rawRepository.name,
-        size: rawRepository.size,
-        private: rawRepository.private,
-        ownerName: rawRepository.owner.login,
-      };
-    });
+    const repositories = rawRepositories.map((rawRepository) => ({ name: rawRepository.name }));
 
     return repositories;
   }

@@ -10,6 +10,6 @@ export abstract class Provider<Client> {
   }
 
   protected abstract authenticate(): void;
-  abstract getRepositoriesByUsername(username: string): Promise<Partial<IRepository>[]>;
+  abstract getRepositoriesNamesByUsername(username: string): Promise<Pick<IRepository, 'name'>[]>;
   abstract getRepositoryByName(name: string): Promise<IRepository>;
 }
